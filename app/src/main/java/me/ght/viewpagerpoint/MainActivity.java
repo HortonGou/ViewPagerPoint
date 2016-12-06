@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     ViewPagerPoint pagerPoint ;
+    int count =1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,13 @@ public class MainActivity extends AppCompatActivity {
                 pagerPoint.setViewPager(viewPager);
             }
         });
+        findViewById(R.id.add_item).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                count++;
+                viewPager.getAdapter().notifyDataSetChanged();
+            }
+        });
     }
 
     private class MyViewPagerAdapter extends PagerAdapter {
@@ -79,17 +87,17 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             View view = null;
-            if (position == 0) {
-                if (views.size() > 0 && views.get(0) != null) {
-                    view = views.get(0);
+            if (position%2 == 0) {
+                if (views.size() > 0&&views.size()>position && views.get(position) != null) {
+                    view = views.get(position);
                 } else {
                     view = LayoutInflater.from(container.getContext()).inflate(R.layout.item_image, container, false);
                     views.add(view);
                 }
                 container.addView(view);
-            } else if (position == 1) {
-                if (views.size() > 1 && views.get(1) != null) {
-                    view = views.get(1);
+            } else if (position%2 == 1) {
+                if (views.size() > 1&&views.size()>position&& views.get(position) != null) {
+                    view = views.get(position);
                 } else {
                     if (views.size() == 0) {
                         views.add(null);
@@ -105,13 +113,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            super.destroyItem(container, position, object);
+//            super.destroyItem(container, position, object);
             container.removeView(views.get(position));
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return count;
         }
 
         @Override

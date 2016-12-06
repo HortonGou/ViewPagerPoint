@@ -1,8 +1,10 @@
 package me.ght.viewpagerpoint;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -44,10 +46,7 @@ public class ViewPagerPoint extends LinearLayout {
     private void init() {
 //        setOrientation(HORIZONTAL);
     }
-    public void setViewPager(ViewPager viewPager){
-        if (viewPager==null){
-            return;
-        }
+    void resetChild(ViewPager viewPager){
         removeAllViews();
         int count = viewPager.getAdapter().getCount();
         for (int i = 0; i < count; i++) {
@@ -75,6 +74,29 @@ public class ViewPagerPoint extends LinearLayout {
 
             addView(imageView);
         }
+        if (getChildCount()>viewPager.getCurrentItem()){
+            getChildAt(viewPager.getCurrentItem()).setPressed(true);
+        }
+    }
+    public void setViewPager(final ViewPager viewPager){
+        if (viewPager==null||viewPager.getAdapter()==null){
+            return;
+        }
+        resetChild(viewPager);
+        viewPager.getAdapter().registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                resetChild(viewPager);
+            }
+
+            @Override
+            public void onInvalidated() {
+                super.onInvalidated();
+                resetChild(viewPager);
+            }
+        });
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -96,6 +118,6 @@ public class ViewPagerPoint extends LinearLayout {
 
             }
         });
-       getChildAt(viewPager.getCurrentItem()).setPressed(true);
+
     }
 }
